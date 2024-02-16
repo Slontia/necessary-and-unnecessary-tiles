@@ -22,7 +22,7 @@ private:
   void shift(int& lv, int rv, int64_t& lx, int64_t rx, int64_t& ly, int64_t ry) const;
   void add1(LVec& lhs, const RVec& rhs, int m) const;
   void add2(LVec& lhs, const RVec& rhs, int m) const;
-  Iter read_file(Iter first, Iter last, std::filesystem::path file) const;
+  Iter read_index(Iter first, Iter last, const int* index) const;
   std::tuple<int, int64_t, int64_t> calc_lh(const int* t, int m) const;
   std::tuple<int, int64_t, int64_t> calc_sp(const int* t) const;
   std::tuple<int, int64_t, int64_t> calc_to(const int* t) const;
@@ -30,7 +30,7 @@ private:
 public:
   CalshtDW()
       : mp1(1953125, RVec(30)), mp2(78125, RVec(30)) {}
-  void initialize(const std::string& dir);
+  void initialize();
   std::tuple<int, int, int64_t, int64_t> operator()(const std::vector<int>& t, int m, int mode) const;
 };
 

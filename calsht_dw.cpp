@@ -6,6 +6,7 @@
 #include <stdexcept>
 #endif
 #include "calsht_dw.hpp"
+#include "index_dw.hpp"
 
 #ifdef THREE_PLAYER
 CalshtDW::Vec CalshtDW::index1(const int n) const
@@ -91,19 +92,12 @@ void CalshtDW::add2(LVec& lhs, const RVec& rhs, const int m) const
   lhs[j + 20] = wait_;
 }
 
-CalshtDW::Iter CalshtDW::read_file(Iter first, Iter last, std::filesystem::path file) const
+CalshtDW::Iter CalshtDW::read_index(Iter first, Iter last, const int* const index) const
 {
-  std::ifstream fin(file);
-
-  if (!fin) {
-    throw std::runtime_error("Reading file does not exist: " + file.string());
-  }
-
-  int tmp;
-
+  size_t i = 0;
   for (; first != last; ++first) {
     for (int j = 0; j < 10; ++j) {
-      fin >> tmp;
+      int tmp = index[i++];
       (*first)[j] = tmp & ((1 << 4) - 1);
       (*first)[j + 10] = (tmp >> 4) & ((1 << 9) - 1);
       (*first)[j + 20] = (tmp >> 13) & ((1 << 9) - 1);
@@ -214,10 +208,10 @@ std::tuple<int, int64_t, int64_t> CalshtDW::calc_to(const int* t) const
   return {14 - kind - (pair > 0 ? 1 : 0), disc, wait};
 }
 
-void CalshtDW::initialize(const std::string& dir)
+void CalshtDW::initialize()
 {
-  read_file(mp1.begin(), mp1.end(), std::filesystem::path(dir) / "index_dw_s.txt");
-  read_file(mp2.begin(), mp2.end(), std::filesystem::path(dir) / "index_dw_h.txt");
+  read_index(mp1.begin(), mp1.end(), index_dw_s);
+  read_index(mp2.begin(), mp2.end(), index_dw_h);
 }
 
 std::tuple<int, int, int64_t, int64_t> CalshtDW::operator()(const std::vector<int>& t, const int m, const int mode) const
